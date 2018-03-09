@@ -1,0 +1,44 @@
+version: '2'
+services:
+  nginx:
+    image: nginx:1.13.9
+    restart: always
+    links:
+      - php
+    depends_on:
+      - php
+    volumes:
+      - ./volumes/www/:/var/www/html/:ro
+      - ./volumes/etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./volumes/etc/nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - 80:80
+      - 443:443
+
+  php:
+    image: wordpress:4.9.4-php7.0-fpm
+    restart: always
+    volumes:
+      - ./volumes/www:/var/www/html
+      - ./volumes/etc/php:/etc/php:ro
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - '9000'
+    environment:
+      - WORDPRESS_DB_NAME=wpdb
+      - WORDPRESS_TABLE_PREFIX=wp_
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_PASSWORD=test
+
+
+  db:
+    image: mariadb
+    restart: always
+    volumes:
+      - ./volumes/etc/mysql:/etc/mysql
+      - ./volumes/var/lib/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
