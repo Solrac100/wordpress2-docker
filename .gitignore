@@ -1,0 +1,6 @@
+mysql/*
+logs/nginx/*
+logs/mysql/*
+logs/php/*
+logs/redis/*
+www/*
